@@ -1,0 +1,10 @@
+{
+  "name": "Tummo Classic 3-Cycle",
+  "steps": [
+    {"phase":"inhale","ms":2000},
+    {"phase":"hold","ms":15000},
+    {"phase":"exhale","ms":15000}
+  ],
+  "cycles": 3,
+  "ambience": "bowl_low.mp3"
+} 
