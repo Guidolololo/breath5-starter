@@ -1,0 +1,11 @@
+{
+  "name": "Anapanasati 16-Step",
+  "stages": [
+    {"title":"Long breath","duration":120000,"bell":true},
+    {"title":"Short breath","duration":120000,"bell":true},
+    {"title":"Whole body","duration":180000,"bell":true},
+    {"title":"Calming formations","duration":180000,"bell":true}
+  ],
+  "ambience": "forest_dawn.mp3",
+  "silent": true
+} 
