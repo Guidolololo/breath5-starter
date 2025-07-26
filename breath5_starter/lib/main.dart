@@ -1,11 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'sections/qigong/qigong_screen.dart';
+import 'sections/qigong/breath_timer.dart';
 import 'sections/pranayama/pranayama_screen.dart';
 import 'sections/tummo/tummo_screen.dart';
 import 'sections/anapanasati/anapanasati_screen.dart';
 import 'sections/sufi/sufi_screen.dart';
 
-void main() => runApp(const BreathApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await HapticService.init();
+  runApp(const BreathApp());
+}
 
 class BreathApp extends StatelessWidget {
   const BreathApp({super.key});
