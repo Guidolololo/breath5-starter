@@ -1,0 +1,9 @@
+{
+  "name": "7-Nafs Purification",
+  "steps": [
+    {"phase":"inhale","ms":7000,"count":7},
+    {"phase":"exhale","ms":7000,"count":7}
+  ],
+  "cycles": 7,
+  "ambience": "reed_flute.mp3"
+} 

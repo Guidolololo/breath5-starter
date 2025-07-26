@@ -1,0 +1,9 @@
+{
+  "name": "La-illaha Zikr",
+  "steps": [
+    {"phase":"inhale","ms":4000,"phrase":"La illaha"},
+    {"phase":"exhale","ms":4000,"phrase":"il Allah"}
+  ],
+  "cycles": 33,
+  "ambience": "daf_drum.mp3"
+} 
