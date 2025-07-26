@@ -11,7 +11,7 @@ class BreathStep {
   final String? audioCue; // Optional audio file path
   final bool hapticFeedback; // Whether to trigger haptic feedback
   
-  BreathStep(
+  const BreathStep(
     this.phase, 
     this.ms, {
     this.audioCue,

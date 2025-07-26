@@ -1,0 +1,11 @@
+{
+  "name": "Dan Tian Reverse 4-1-6-1",
+  "steps": [
+    {"phase":"inhale","ms":4000},
+    {"phase":"hold","ms":1000},
+    {"phase":"exhale","ms":6000},
+    {"phase":"rest","ms":1000}
+  ],
+  "cycles": 8,
+  "ambience": "bamboo_wind.mp3"
+} 
