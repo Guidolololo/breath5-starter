@@ -1,0 +1,165 @@
+---
+alwaysApply: true
+---
+# React Native, Expo, and Mobile App Development Guidelines
+
+You are an expert in TypeScript, React Native, Expo, and Mobile App Development. Adhere strictly to the following guidelines for all code generation and modifications.
+
+## Key Principles
+
+- Write concise, type-safe TypeScript code.
+- Use functional and declarative programming patterns; avoid classes.
+- Prefer iteration and modularization over code duplication.
+- Use descriptive variable names with auxiliary verbs (e.g., `isLoading`, `hasError`).
+- Ensure components are modular, reusable, and maintainable.
+- Destructure objects as much as possible.
+
+## Code Style and Structure
+
+- Use functional components and hooks over class components. Use arrow functions to create the components and add proper typings wherever needed.
+- Always split the component code from styles. Styles should always go in a separate file. For example, if you are creating a `ProfileScreen`, make a folder `profile-screen` and in there make two files: `profile-screen/index.tsx` and `profile-screen/styles.ts`.
+
+**Standard Directory Structure:**
+
+-   `components`: This directory contains all components that can be reused across the project. When creating a new component or implementing a new design, create a dedicated folder within `components` with the following structure:
+    ```
+    components/button
+    ├── index.tsx // Contains all component logic (e.g., MyButton component)
+    ├── styles.ts // Contains component styling (e.g., buttonStyles)
+    └── types.ts // Contains any types associated with the component (e.g., MyButtonProps)
+    ```
+-   **Component Declaration Example:** Components should be declared as an arrow function and then exported as default:
+    ```typescript
+    // All necessary imports
+    import { MyButtonProps } from './types';
+    // ... other imports
+
+    const MyButton: FC<PropsWithChildren<MyButtonProps>> = ({
+      // ... destructure props here
+      children,
+      onPress,
+      ...rest
+    }) => {
+      // All component-level logic
+      // ...
+      return (
+        // UI elements go here
+        <TouchableOpacity style={styles.button} onPress={onPress} {...rest}>
+          <Text style={styles.text}>{children}</Text>
+        </TouchableOpacity>
+      );
+    };
+
+    export default MyButton;
+    ```
+-   `app`: This directory should contain all pages and layouts, following Expo's file-based routing (refer to: https://docs.expo.dev/develop/file-based-routing/).
+-   **Screen Implementation Example:** For screens, create a folder in the `app` directory. It must contain `index.tsx` and `styles.ts`. `types.ts` and `_layout.tsx` (for Expo Router layouts) are optional and included only when required. For example, a search page might look like this:
+    ```
+    app/search // contents of search page
+    ├── index.tsx // contains all the screen logic
+    ├── styles.ts // contains screen styling
+    ├── _layout.tsx // contains screen layout (optional, Expo Router specific)
+    └── types.ts // contains any types associated with the screen (optional)
+    ```
+-   **Screen Component Declaration Example:** In `index.tsx` files for screens, the screen name should be declared properly (e.g., `Search` for the search screen). The screen component should be declared as an arrow function and then exported as default:
+    ```typescript
+    // All necessary imports
+    import React, { FC, PropsWithChildren } from 'react';
+    // ... other imports and styles
+
+    const Search: FC<PropsWithChildren> = () => {
+      // All component-level logic for the screen
+      // ...
+      return (
+        // Screen UI elements go here
+        <View style={styles.container}>
+          {/* ... */}
+        </View>
+      );
+    };
+
+    export default Search;
+    ```
+-   **Component Reusability:** Before implementing a new design on a screen, check the `components` folder for existing reusable components (e.g., buttons, input fields, cards, modals).
+-   **Input Fields:** When using input fields on a screen, always use keyboard avoiding scroll views (`KeyboardAvoidingView` within `ScrollView`) to ensure the screen adjusts properly for keyboard visibility.
+-   **Form Handling:** Always use `Formik` and `Yup` for data inputs and validations.
+
+-   `services`: This directory contains all supporting materials and utilities:
+    ```
+    services
+    ├── apis // Contains API definitions for the entire app
+    │   ├── axios-client.ts
+    │   └── index.ts
+    ├── constants // Contains constants and strings used in the app
+    │   └── index.ts
+    └── types // Contains all reusable global types for the app (types specific to a single component reside in its own directory's `types.ts` file)
+    ├── api-types.ts
+    └── form-types.ts
+    ```
+
+## Implementing APIs
+
+-   APIs reside in files within `services/apis`. When implementing a new API, add it to the `apis` object first. An example of the `apis/index.ts` file:
+    ```typescript
+    import axiosClient from './axios-client'; // Assuming axios-client is configured
+    import * as ApiTypes from '../types/api-types'; // Global API types
+
+    export const apis = {
+      // Example API call:
+      authenticateWithFirebaseToken: ({ idToken }: ApiTypes.AuthenticateRequest) =>
+        axiosClient.post<ApiTypes.AuthResponse>("auth/authenticate", { idToken }),
+      // ... other API definitions
+    };
+    ```
+-   To use an API, call it from the `apis` object:
+    ```typescript
+    import { apis } from '../../services/apis'; // Adjust path as needed
+
+    const loginUser = async (idToken: string) => {
+      try {
+        const { data } = await apis.authenticateWithFirebaseToken({ idToken });
+        // Handle successful authentication
+        console.log('Auth successful:', data);
+      } catch (error) {
+        // Handle error
+        console.error('Auth failed:', error);
+      }
+    };
+    ```
+
+## Naming Conventions
+
+-   Use `camelCase` for variable and function names (e.g., `isFetchingData`, `handleUserInput`).
+-   Use `PascalCase` for component names in React and React Native (e.g., `UserProfile`, `ChatScreen`).
+-   Directory names should be lowercase and hyphenated (e.g., `user-profile`, `chat-screen`).
+-   Avoid using ambiguous names for variables or components.
+
+## TypeScript Usage
+
+-   Use TypeScript for all components, favoring interfaces for props and state.
+-   Enable strict typing in `tsconfig.json`.
+-   Avoid using `any`; strive for precise types.
+-   Utilize `React.FC` for defining functional components with props.
+
+## UI and Styling
+
+-   Use consistent styling, either through `StyleSheet.create()` or Styled Components.
+-   Ensure responsive design by considering different screen sizes and orientations.
+-   Do not use inline styling. Always place styling in the styles file inside the current directory of a component or a page.
+-   Optimize image handling using libraries designed for React Native, like `react-native-fast-image`.
+
+## Performance Optimization
+
+-   Minimize `useEffect`, `useState`, and heavy computations inside render methods.
+-   Use `React.memo()` for components with static props to prevent unnecessary re-renders.
+-   Utilize `useCallback` for memoizing functions passed as props to child components to prevent unnecessary re-renders of the child.
+-   Utilize `useMemo` for memoizing expensive computations or values that don't need to be re-calculated on every render.
+-   Optimize `FlatList` components with props like `removeClippedSubviews`, `maxToRenderPerBatch`, and `windowSize`.
+-   Use `getItemLayout` for `FlatList` when items have a consistent size to significantly improve rendering performance.
+-   Avoid anonymous functions in `renderItem` or event handlers directly within JSX to prevent re-creation on every render, which can lead to unnecessary re-renders of child components. Instead, define them outside the JSX or use `useCallback`.
+
+## Best Practices
+
+-   Follow React Native's threading model to ensure smooth UI performance.
+-   Utilize Expo's EAS Build and Updates for continuous deployment and Over-The-Air (OTA) updates.
+-   Use React Navigation for handling navigation and deep linking with best practices.

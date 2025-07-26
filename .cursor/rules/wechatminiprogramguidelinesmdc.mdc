@@ -1,0 +1,105 @@
+---
+description: Comprehensive guidelines for WeChat Mini Program development, focusing on WXML, WXSS, and TypeScript best practices.
+alwaysApply: true
+globs:
+  - "**/*.ts"
+  - "**/*.js"
+  - "**/*.wxml"
+  - "**/*.wxss"
+  - "**/*.json"
+---
+
+# WeChat Mini Program Development Guidelines
+
+You are an expert in WeChat Mini Program development, focusing on WXML, WXSS, and TypeScript. Adhere strictly to the following guidelines for all code generation, corrections, and refactorings.
+
+## Key Principles
+- Write clear, efficient code following WeChat Mini Program best practices.
+- Use ES6+ features supported by the platform.
+- Use TypeScript for type safety and a better development experience.
+- Follow WeChat's security and performance guidelines.
+- Use descriptive variable names (e.g., `isLoading`, `hasUserInfo`).
+- Structure files according to Mini Program conventions.
+
+## File Structure & Naming
+- Use kebab-case for component and page names (e.g., `user-profile`, `product-detail`).
+- Organize files into standard Mini Program directories: `pages/`, `components/`, `utils/`, and `services/`.
+- Follow Mini Program file extensions: `.wxml` (templates), `.wxss` (styles), `.js` (logic), `.json` (configuration).
+- Use `.ts` extension for TypeScript logic files.
+- Create separate type definition files (`.d.ts`) when needed for complex types or external modules.
+- Keep global configuration in `app.json` and page-specific configuration in page-level `.json` files.
+- Use `index` naming for main files within directories (e.g., `components/my-component/index.ts`).
+
+## Component Guidelines
+- Create reusable components for common UI elements and encapsulated logic.
+- Keep components small and focused on a single responsibility.
+- Use properties (`properties` field in `.json` or TypeScript definition) for component configuration.
+- Define proper TypeScript interfaces for component properties (`Component.Properties`).
+- Use type-safe event handlers (`Component.CustomEvent`).
+- Implement proper lifecycle methods (e.g., `lifetimes`, `pageLifetimes`).
+- Handle events with clear and consistent naming (e.g., `handleTap`, `onSubmit`, `onInput`).
+
+## TypeScript / WXML Specifics
+- Use `async`/`await` for asynchronous operations (e.g., `wx.request`, `wx.cloud`).
+- Define proper types for all variables and function parameters.
+- Use interfaces for API responses and request payloads to ensure data consistency.
+- Leverage TypeScript's strict mode for better type checking and fewer runtime errors.
+- Implement proper error handling for API calls (e.g., `try-catch` blocks).
+- Use `wx.showToast()` for user feedback and `wx.showLoading()` for long operations.
+- Leverage Mini Program built-in components (e.g., `view`, `text`, `image`, `button`).
+- Follow the MVVM (Model-View-ViewModel) pattern using `setData()` to update the view.
+- Type-check `setData` parameters to ensure consistency between data model and view updates.
+- Use template strings for dynamic content in `.wxml` when appropriate.
+- Avoid using `setTimeout`/`setInterval` for frequent UI updates where possible; prefer reactive data flow.
+
+## Performance Optimization
+- Use `wx:key` in list rendering (`wx:for`) to optimize rendering performance for dynamic lists.
+- Implement proper page lifecycle methods to manage resource usage (e.g., `onUnload` to clean up).
+- Optimize image loading with lazy-load techniques (e.g., `lazy-load` attribute on `image` component).
+- Use `createSelectorQuery()` efficiently to minimize DOM queries.
+- Minimize `setData` calls and the size of data passed to `setData` to reduce communication overhead between logic and view layers.
+- Implement pull-down refresh (`enablePullDownRefresh`) properly, providing visual feedback and handling data updates.
+- Use async loading for non-critical resources to improve initial page load time.
+
+## Security
+- Validate all user input on both the client-side (front-end) and server-side (if applicable).
+- Use proper data encryption methods for sensitive data in transit and at rest.
+- Implement secure authentication flows (e.g., using WeChat's login APIs securely).
+- Follow WeChat's official security guidelines and review new updates.
+- Handle sensitive user data appropriately, ensuring compliance with privacy regulations.
+
+## Storage & State Management
+- Use proper storage methods (`wx.setStorage`, `wx.getStorage`, `wx.removeStorage`, `wx.clearStorage`) for local data persistence.
+- Define TypeScript interfaces for stored data structures to maintain type safety.
+- Implement efficient data caching mechanisms (e.g., time-based expiry) to reduce network requests.
+- Handle global state appropriately, typically via `getApp().globalData` or a dedicated state management pattern.
+- Type global state using TypeScript interfaces for clear structure.
+- Clear sensitive data from storage and global state on user logout.
+- Use `getApp().globalData` for global state sparingly; prefer passing data between pages or using more sophisticated state management for complex apps.
+
+## Key Conventions
+1.  Follow WeChat's official design guidelines for a consistent user experience.
+2.  Implement proper error handling across all layers of the application.
+3.  Use TypeScript's type system effectively to build robust and maintainable code.
+4.  Optimize for mobile performance, considering network conditions and device capabilities.
+5.  Follow Mini Program security standards diligently.
+
+## Testing
+- Test on various devices and OS versions (iOS, Android, different WeChat versions) using the WeChat Developer Tools.
+- Implement proper error logging (e.g., using `wx.log` or custom logging services) for diagnostics.
+- Write type-safe test cases to ensure logic correctness and type integrity.
+- Use Mini Program debug tools effectively for debugging and profiling.
+- Test network conditions (e.g., slow networks, offline mode) to ensure graceful degradation.
+- Verify WeChat API compatibility and behavior across different environments.
+
+## TypeScript-Specific Guidelines
+- Enable strict mode (`"strict": true`) in `tsconfig.json` for rigorous type checking.
+- Use interfaces over types for better extensibility and declaration merging, especially for object shapes.
+- Define proper return types for all functions to clarify their output.
+- Use `const enum` for constant values when full enum features are not required, for better tree-shaking (though standard `enum` is often fine for simple constants too).
+- Leverage union types and type guards (`is` keyword, `typeof`, `instanceof`) for handling data with varying structures.
+- Create type definitions (`.d.ts` files) for external JavaScript libraries or custom global variables when needed.
+- Use generics for reusable components and utilities to make them type-agnostic and flexible.
+
+## Reference
+Refer to WeChat Mini Program documentation for components, APIs, and best practices.

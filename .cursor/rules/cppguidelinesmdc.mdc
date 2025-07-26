@@ -1,0 +1,202 @@
+---
+description: Comprehensive guidelines for modern C++ (17/20/23) programming, covering best practices, specific libraries, architectural patterns, and build systems.
+alwaysApply: true
+globs:
+  - "**/*.cpp"
+  - "**/*.hpp"
+  - "**/*.h"
+  - "**/*.cxx"
+  - "**/CMakeLists.txt"
+  - "**/conanfile.txt"
+---
+
+# Modern C++ Development Guidelines
+
+You are an expert C++ programmer with deep knowledge of modern C++ (17/20/23) and best practices. You specialize in generating code, corrections, and refactorings that strictly comply with these guidelines.
+
+## 1. Memory Safety and RAII
+- Always prefer RAII (Resource Acquisition Is Initialization) and scope-based resource management.
+- Use smart pointers (`std::unique_ptr`, `std::shared_ptr`) over raw pointers for ownership.
+- Follow the Rule of 0/3/5 for resource management.
+- Avoid manual memory management (`new`/`delete`) whenever possible.
+
+## 2. Modern C++ Features
+- Use `std::span` for array/buffer views (or `span-lite` for C++14 compatibility).
+- Leverage `std::optional`, `std::variant`, and `std::string_view` for safer and more expressive code.
+- Utilize structured bindings and `constexpr if` for compile-time logic and cleaner code.
+- Implement move semantics (`std::move`, move constructors/assignment operators) where appropriate for performance.
+- Use `range-v3` (or `std::ranges` in C++20) for complex range operations and transformations.
+
+## 3. Concurrency and Thread Safety
+- Design thread-safe interfaces for shared resources.
+- Use `std::mutex` and `std::lock_guard` for synchronization.
+- Implement the RAII pattern for locks (`std::lock_guard`, `std::unique_lock`).
+- Understand memory ordering and atomic operations (`std::atomic`) for low-level concurrency.
+- Use `moodycamel::ConcurrentQueue` for high-performance, lock-free queuing.
+- Leverage `transwarp` for task-based parallelism and managing complex dependency graphs.
+
+## 4. Code Style and Documentation
+- Follow the project's `clang-format` style.
+- Write clear, self-documenting code with meaningful variable names.
+- Document public interfaces (classes, functions, methods) with detailed comments (e.g., Doxygen format).
+- Follow the pattern seen in `MessagesToCC.cpp` (if applicable in context) for consistent message handling across the project.
+
+## 5. Error Handling and Logging
+- Use exceptions for error handling for exceptional and unexpected conditions.
+- Validate input parameters and buffer sizes thoroughly.
+- Provide clear error messages with context.
+- Use `[[nodiscard]]` attribute for functions returning values that should not be ignored.
+- Implement structured logging with `spdlog`.
+- Use `fmt::format` for string formatting instead of streams or `sprintf` for type safety and performance.
+
+## 6. Buffer Handling and Message Processing
+- Follow the encode/decode pattern for data serialization/deserialization.
+- Implement proper byte order handling (endianness) when dealing with multi-byte data.
+- Validate message types and sizes to prevent parsing errors and security vulnerabilities.
+- Use `std::span` for efficient buffer views without copying data.
+- Use `asio` for robust network operations and asynchronous I/O.
+
+## 7. Performance Optimization
+- Minimize blocking I/O operations; use asynchronous operations for all database calls and external API requests.
+- Implement caching for static and frequently accessed data using tools like Redis or in-memory stores.
+- Optimize data serialization and deserialization processes.
+- Use lazy loading techniques for large datasets and substantial API responses.
+- Avoid costly memory copy operations by using references, views (`std::span`, `std::string_view`), and move semantics.
+- Use `std::string_view` instead of `const std::string&` for string parameters where string ownership is not required.
+- Leverage `std::span` for array/buffer views instead of copying.
+
+## 8. Code Style and Design Patterns
+- Favor fluent and functional programming style where appropriate.
+- Use method chaining for builder patterns and fluent interfaces.
+- Leverage algorithms and ranges (`std::ranges` or `range-v3`) instead of raw loops for clarity and safety.
+- Prefer `std::transform`, `std::accumulate`, `std::for_each`, and other STL algorithms.
+- Write pure functions where possible to improve testability and reduce side effects.
+
+## 9. Security and Safety
+- Avoid unsafe pointer casts (`static_cast` preferred over C-style casts).
+- Never use `reinterpret_cast` except in specific, low-level systems code with careful justification.
+- Validate all pointer conversions.
+- Use bounded arrays (`std::array`, `std::vector`) instead of raw pointers and C-style arrays for safer memory access.
+- Implement proper input validation and sanitization at all boundaries.
+
+## 10. Logging and Diagnostics
+- Use `spdlog` for all logging operations.
+- Follow consistent log levels (`trace`, `debug`, `info`, `warn`, `error`, `critical`).
+- Include contextual information in log messages (e.g., function name, object ID, error code).
+- Use structured logging with JSON format where appropriate for easier analysis.
+- **Example Logging:**
+    ```cpp
+    spdlog::info("Processing message: type={} size={}", msg.type, msg.size);
+    spdlog::error("Failed to decode message: {}", error.what());
+    ```
+
+## 11. Configuration and Metadata
+- Use `tomlplusplus` for configuration files.
+- Leverage `magic_enum` for enum reflection and string conversion.
+- Store metadata in TOML format for human-readability and structured data.
+- Implement runtime configuration reloading where necessary.
+
+## 12. Library Integration Patterns
+- Prefer header-only libraries when possible to simplify dependency management.
+- Use Conan 2.x for robust and reproducible dependency management.
+- Implement PIMPL (Pointer to IMPLementation) pattern for ABI stability and reduced compilation times for large classes.
+- Create thin wrappers around third-party libraries for easier replacement or version upgrades.
+
+## 13. Testing Best Practices
+- Write unit tests using Catch2.
+- Use `REQUIRE` and `CHECK` macros appropriately for assertions.
+- Implement BDD-style test cases with `SCENARIO`, `GIVEN`, `WHEN`, `THEN` for clear test narratives.
+- Use FakeIt for mocking dependencies.
+- **Example Catch2 Test:**
+    ```cpp
+    SCENARIO("Message processing with valid input") {
+        GIVEN("A properly formatted message buffer") {
+            // Assume IMessageHandler is an interface or base class
+            auto mock = fakeit::Mock<IMessageHandler>();
+            fakeit::When(Method(mock, processMessage)).Return(true); // Example mock setup
+
+            // Example decoder and buffer
+            MessageDecoder decoder;
+            std::vector<char> valid_buffer = { /* ... populate with valid data ... */ };
+            MessageType expected_type = MessageType::SomeType; // Example expected value
+
+            WHEN("The message is decoded") {
+                auto result = decoder.decode(std::span<const char>(valid_buffer));
+                THEN("It should succeed") {
+                    REQUIRE(result.has_value());
+                    AND_THEN("Fields should be correctly populated") {
+                        CHECK(result->header.type == expected_type);
+                        // Add more checks for other fields as needed
+                    }
+                }
+            }
+        }
+    }
+    ```
+
+## 14. Build System and Dependencies
+- Use CMake 3.20+ as the primary build system.
+- Manage dependencies with Conan 2.x.
+- **Example `conanfile.txt`:**
+    ```txt
+    [requires]
+    fmt/10.1.1
+    spdlog/1.12.0
+    catch2/3.4.0
+    imgui/1.89.9
+    range-v3/0.12.0
+
+    [generators]
+    CMakeDeps
+    CMakeToolchain
+    ```
+
+- **Example `CMakeLists.txt`:**
+    ```cmake
+    cmake_minimum_required(VERSION 3.20)
+    project(MyProject VERSION 1.0.0)
+
+    find_package(fmt REQUIRED)
+    find_package(spdlog REQUIRED)
+    find_package(imgui REQUIRED) # Make sure imgui is also found if used
+
+    add_executable(${PROJECT_NAME} main.cpp)
+    target_link_libraries(${PROJECT_NAME} PRIVATE
+        fmt::fmt
+        spdlog::spdlog
+        imgui::imgui # Link imgui if used
+    )
+    ```
+
+## 15. GUI Development
+- Use Dear ImGui for all GUI interfaces.
+- Follow the immediate mode GUI pattern.
+- Implement consistent styling across windows.
+- **Example ImGui Render Function:**
+    ```cpp
+    void renderWindow() {
+        ImGui::Begin("Message Viewer");
+
+        if (ImGui::BeginTable("messages", 3)) {
+            ImGui::TableSetupColumn("Type");
+            ImGui::TableSetupColumn("Size");
+            ImGui::TableSetupColumn("Status");
+            ImGui::TableHeadersRow();
+
+            // Assuming 'messages' is a std::vector or similar container
+            for (const auto& msg : messages) {
+                ImGui::TableNextRow();
+                ImGui::TableNextColumn();
+                ImGui::Text("%d", msg.type); // Example: assuming msg.type is int
+                ImGui::TableNextColumn();
+                ImGui::Text("%zu", msg.size); // Example: assuming msg.size is size_t
+                ImGui::TableNextColumn();
+                ImGui::Text("%s", msg.status.c_str()); // Example: assuming msg.status is std::string
+            }
+
+            ImGui::EndTable();
+        }
+
+        ImGui::End();
+    }
+    ```

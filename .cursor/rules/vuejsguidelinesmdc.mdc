@@ -1,0 +1,53 @@
+---
+description: Comprehensive guidelines for Vue.js development with TypeScript, Node.js, Vite, Nuxt, Pinia, VueUse, Headless UI, Element Plus, and Tailwind.
+alwaysApply: true
+globs:
+  - "**/*.ts"
+  - "**/*.vue"
+  - "**/*.js"
+  - "**/*.jsx"
+  - "**/*.tsx"
+  - "**/*.scss"
+  - "**/*.css"
+---
+
+# Vue.js Development Guidelines
+
+You are an expert in TypeScript, Node.js, Vite, Nuxt, Vue.js, Vue Router, Pinia, VueUse, Headless UI, Element Plus, and Tailwind, with a deep understanding of best practices and performance optimization techniques in these technologies. Adhere strictly to the following guidelines for all code generation, corrections, and refactorings.
+
+## Code Style and Structure
+- Write concise, maintainable, and technically accurate TypeScript code with relevant examples.
+- Use functional and declarative programming patterns; avoid classes for Vue components and core logic.
+- Favor iteration and modularization to adhere to DRY (Don't Repeat Yourself) principles and avoid code duplication.
+- Use descriptive variable names with auxiliary verbs (e.g., `isLoading`, `hasError`).
+- Organize files systematically: each file should contain only related content, such as exported components, subcomponents, helpers, static content, and types.
+
+## Naming Conventions
+- Use lowercase with dashes for directories (e.g., `components/auth-wizard`).
+- Favor named exports for functions, components, services, and utilities.
+- Use BEM (Block-Element-Modifier) or a similar methodology for Tailwind CSS classes when writing custom classes (e.g., `block__element--modifier`).
+
+## TypeScript Usage
+- Use TypeScript for all code; prefer interfaces over types for their extendability and ability to merge.
+- Avoid enums; use maps instead for better type safety and flexibility.
+- Use functional components with TypeScript interfaces.
+
+## Syntax and Formatting
+- Use the "function" keyword for pure functions to benefit from hoisting and clarity (for standalone utility functions).
+- Always use the Vue Composition API `script setup` style for single-file components.
+
+## UI and Styling
+- Use Headless UI, Element Plus, and Tailwind for components and styling.
+- Implement responsive design with Tailwind CSS; use a mobile-first approach.
+- Build UI components using atomic design principles, organizing them from smallest to largest (e.g., atoms, molecules, organisms, pages, templates).
+
+## Performance Optimization
+- Leverage VueUse functions where applicable to enhance reactivity, simplify common patterns, and improve performance.
+- Wrap asynchronous components (e.g., `defineAsyncComponent`) in `Suspense` with a fallback UI to provide a better user experience during loading states.
+- Use dynamic loading (`defineAsyncComponent`, route-level lazy loading) for non-critical components and routes to reduce initial bundle size.
+- Optimize images: use WebP format, include size data (width, height), and implement lazy loading (e.g., using `loading="lazy"` or a dedicated library).
+- Implement an optimized chunking strategy during the Vite build process, such as code splitting at routes or component levels, to generate smaller and more efficiently loaded bundle sizes.
+
+## Key Conventions
+- Optimize Web Vitals (LCP: Largest Contentful Paint, CLS: Cumulative Layout Shift, FID: First Input Delay/INP: Interaction to Next Paint) using tools like Lighthouse or WebPageTest.
+- Implement proper error boundaries (e.g., Vue's `errorCaptured` hook or an external library) or `try-catch` mechanisms to handle errors gracefully, especially in asynchronous operations (e.g., API calls, data fetching).

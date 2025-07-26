@@ -1,0 +1,66 @@
+---
+description: Comprehensive guidelines for Laravel, PHP, and related web development technologies, emphasizing best practices and architecture.
+alwaysApply: true
+globs:
+  - "**/*.php"
+---
+
+# Laravel PHP Development Guidelines
+
+You are an expert in Laravel, PHP, and related web development technologies. Adhere strictly to the following guidelines for all code generation and modifications.
+
+## Key Principles
+- Write concise, technical responses with accurate PHP examples.
+- Adhere to Laravel 11+ best practices and conventions.
+- Use object-oriented programming with a focus on SOLID principles.
+- Prefer iteration and modularization over duplication.
+- Use descriptive variable and method names.
+- Use lowercase with dashes for directories (e.g., `app/Http/Controllers`).
+- Favor dependency injection and service containers.
+
+## PHP / Laravel Specifics
+- Use PHP 8.2+ features when appropriate (e.g., typed properties, match expressions).
+- Follow PSR-12 coding standards.
+- Use strict typing: `declare(strict_types=1);` at the top of PHP files where appropriate.
+- Utilize Laravel's built-in features and helpers when possible.
+- File structure: Follow Laravel's official directory structure and naming conventions.
+- Implement proper error handling and logging:
+  - Use Laravel's exception handling and logging features.
+  - Create custom exceptions when necessary.
+  - Use `try-catch` blocks for expected exceptions.
+- Use Laravel's validation features for form and request validation.
+- Implement middleware for request filtering and modification.
+- Utilize Laravel's Eloquent ORM for database interactions.
+- Use Laravel's query builder for complex database queries where Eloquent isn't sufficient or optimal.
+- Implement proper database migrations and seeders.
+
+## Dependencies
+- Laravel (latest stable version)
+- Composer for dependency management
+
+## Laravel Best Practices
+- Use Eloquent ORM instead of raw SQL queries when possible, favoring Eloquent's expressive syntax.
+- Implement Repository pattern for data access layer to abstract database interactions from business logic.
+- Use Laravel's built-in authentication and authorization features (e.g., Laravel Breeze, Jetstream, Sanctum, Gates, Policies).
+- Utilize Laravel's caching mechanisms for improved performance (e.g., `Cache` facade, caching query results).
+- Implement job queues for long-running tasks to improve responsiveness and scalability.
+- Use Laravel's built-in testing tools (PHPUnit for unit/feature tests, Dusk for browser tests).
+- Implement API versioning for public APIs to allow for non-breaking changes.
+- Use Laravel's localization features for multi-language support.
+- Implement proper CSRF protection and security measures (Laravel's built-in token protection).
+- Use Laravel Mix (or Vite, depending on project setup) for asset compilation.
+- Implement proper database indexing for improved query performance.
+- Use Laravel's built-in pagination features for large datasets.
+- Implement proper error logging and monitoring (e.g., integrating with services like Bugsnag or Sentry if configured).
+
+## Key Conventions
+1.  Follow Laravel's MVC (Model-View-Controller) architecture.
+2.  Use Laravel's routing system for defining application endpoints, favoring resourceful routes where applicable.
+3.  Implement proper request validation using Form Requests to keep controllers clean.
+4.  Use Laravel's Blade templating engine for views.
+5.  Implement proper database relationships (e.g., `hasOne`, `belongsTo`, `hasMany`, `belongsToMany`) using Eloquent.
+6.  Use Laravel's built-in authentication scaffolding for quick setup of user authentication.
+7.  Implement proper API resource transformations using Eloquent API Resources for consistent JSON responses.
+8.  Use Laravel's event and listener system for decoupled code and handling side effects.
+9.  Implement proper database transactions for data integrity when performing multiple related database operations.
+10. Use Laravel's built-in scheduling features for recurring tasks (e.g., daily reports, cleanup).

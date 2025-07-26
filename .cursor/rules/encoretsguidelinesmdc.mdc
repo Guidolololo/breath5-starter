@@ -1,0 +1,193 @@
+description: Critical guidelines for Supabase Auth SSR implementation in Next.js using @supabase/ssr with Encore.ts backend integration
+alwaysApply: true
+globs:
+  - "**/middleware.ts"
+  - "**/supabase/**/*.ts"
+  - "**/auth/**/*.ts"
+
+# Supabase Auth SSR with Encore.ts Backend
+
+## Implementation Overview
+
+1. Frontend Setup:
+   - Install `@supabase/supabase-js` and `@supabase/ssr`
+   - Configure environment variables
+   - Create browser/server client utilities
+   - Implement auth middleware
+
+2. Backend Setup (Encore.ts):
+   - Create authentication API endpoints
+   - Configure CORS for frontend access
+   - Implement session management
+
+## 🚨 Critical Frontend Rules
+
+### FORBIDDEN PATTERNS
+```typescript
+// ❌ NEVER USE - WILL BREAK APPLICATION
+{
+  cookies: {
+    get(name: string) { return cookieStore.get(name) },
+    set(name: string, value: string) { cookieStore.set(name, value) },
+    remove(name: string) { cookieStore.remove(name) }
+  }
+}
+
+// ❌ DEPRECATED IMPORTS
+import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs'
+
+MANDATORY PATTERNS
+
+// ✅ REQUIRED IMPLEMENTATION
+{
+  cookies: {
+    getAll() { return cookieStore.getAll() },
+    setAll(cookiesToSet) {
+      const response = NextResponse.next({ request })
+      cookiesToSet.forEach(({ name, value, options }) => {
+        response.cookies.set(name, value, options)
+      })
+      return response
+    }
+  }
+}
+
+Encore.ts Backend Integration
+
+Auth API Endpoint
+
+import { api } from "encore.dev/api"
+
+interface AuthRequest {
+  session_token: string
+}
+
+interface AuthResponse {
+  user_id: string
+  email: string
+}
+
+export const verifySession = api<AuthRequest, AuthResponse>(
+  { method: "POST", path: "/auth/verify", expose: true },
+  async ({ session_token }) => {
+    // Verify session with Supabase
+    const user = await verifySupabaseSession(session_token)
+    return {
+      user_id: user.id,
+      email: user.email
+    }
+  }
+)
+
+CORS Configuration
+
+// encore.app
+global_cors: {
+  allow_origins_without_credentials: [
+    "http://localhost:3000", // Your Next.js app
+    "https://your-production-domain.com"
+  ]
+  allow_headers: ["Authorization", "Content-Type"]
+}
+
+Frontend Implementation
+
+Browser Client
+
+import { createBrowserClient } from '@supabase/ssr'
+
+export function createClient() {
+  return createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
+}
+
+Server Client
+
+import { createServerClient } from '@supabase/ssr'
+import { cookies } from 'next/headers'
+
+export async function createClient() {
+  const cookieStore = cookies()
+  return createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() { return cookieStore.getAll() },
+        setAll(cookiesToSet) {
+          try {
+            cookiesToSet.forEach(({ name, value, options }) =>
+              cookieStore.set(name, value, options)
+            )
+          } catch {
+            // Ignore if called from Server Component with middleware
+          }
+        }
+      }
+    }
+  )
+}
+
+Session Verification Flow
+
+async function verifySessionWithBackend(sessionToken: string) {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/verify`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ session_token: sessionToken }),
+    credentials: 'include'
+  })
+
+  if (!response.ok) {
+    throw new Error('Session verification failed')
+  }
+
+  return await response.json()
+}
+
+AI Verification Checklist
+
+Before generating code, ALWAYS verify:
+
+Only using getAll/setAll cookie methods
+
+Importing exclusively from @supabase/ssr
+
+No deprecated auth-helpers-nextjs imports
+
+Encore.ts endpoints properly exposed and typed
+
+CORS configured for frontend domains
+
+Security Considerations
+
+Always use HTTPS in production
+
+Set secure cookie flags:
+
+response.cookies.set(name, value, {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'lax',
+  path: '/',
+})
+
+Validate all session tokens on backend
+
+Implement rate limiting on auth endpoints
+
+Debugging Tips
+
+Check Encore.ts logs for auth errors:
+
+encore logs --env=dev
+
+Verify CORS headers in browser devtools
+
+Test session verification independently
+
+Monitor Supabase dashboard for auth events
